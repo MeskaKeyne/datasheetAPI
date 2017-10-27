@@ -1,5 +1,6 @@
 package be.ste.st.datasheet.rest.service;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 import be.steformations.java_data.timesheets.service.TimesheetsDataService;
@@ -9,7 +10,7 @@ public class DaoRestFactory {
 	
 	private static DaoRestFactory instance = new DaoRestFactory();
 	private TimesheetsDataService dao;
-	protected javax.persistence.EntityManager entityManager;
+	protected EntityManager entityManager;
 	
 	private DaoRestFactory() {
 		super();

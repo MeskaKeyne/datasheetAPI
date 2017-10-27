@@ -1,7 +1,16 @@
 package be.ste.st.datasheet.rest.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import be.ste.ts.datasheet.dto.DTOEmploye;
 import be.steformations.java_data.timesheets.entities.Employee;
@@ -12,41 +21,37 @@ public class TimeSheetService {
 	private TimesheetsDataService dao;
 	
 	public TimeSheetService() {
-		System.out.println("TimeSheetService.TimeSheetService()");
+		super();
 		this.dao= DaoRestFactory.getInstance().getDao();
 	}
 	
-	@javax.ws.rs.GET
-	@javax.ws.rs.Path("employe/{id:[1-9]+}")
-	@javax.ws.rs.Produces(javax.ws.rs.core.MediaType.APPLICATION_XML)
-	public javax.ws.rs.core.Response getEmployeById(
-			@javax.ws.rs.PathParam("id") int id) {
-		javax.ws.rs.core.Response response = null;
+	@GET
+	@Path("employe/{id:[1-9]+}")
+	@Produces(MediaType.APPLICATION_XML)
+	public Response getEmployeById(@PathParam("id") int id) {
+		Response response = null;
 		Employee emp = this.dao.findOneEmployeeById(id);
 		if (emp == null) {
-			response = javax.ws.rs.core.Response.status(404).build();
+			response = Response.status(404).build();
 		} else {
 			DTOEmploye dto = DTOBuilder.build(emp);
-			response = javax.ws.rs.core.Response.ok(dto).build();
+			response = Response.ok(dto).build();
 		}
 		return response;
 	}
 	
-	@javax.ws.rs.Path("employe/list")
-	@javax.ws.rs.GET
-	@javax.ws.rs.Produces(javax.ws.rs.core.MediaType.APPLICATION_XML)
+	@Path("employe/list")
+	@GET
+	@Produces(MediaType.APPLICATION_XML)
 	public javax.ws.rs.core.Response getAllEmploye() {
-		javax.ws.rs.core.Response response = null;
+		Response response = null;
 	
 		List<? extends Employee> employes = this.dao.findAllEmployees();
-		List<DTOEmploye> dtos = new java.util.ArrayList<DTOEmploye>();
-		for (Employee emp : employes) {
-			dtos.add(DTOBuilder.build(emp));
-		}
+		List<DTOEmploye> dtos = new ArrayList<DTOEmploye>();
+		for (Employee emp : employes) dtos.add(DTOBuilder.build(emp));
 		
-		javax.ws.rs.core.GenericEntity<List<DTOEmploye>> entity
-			= new javax.ws.rs.core.GenericEntity<List<DTOEmploye>>(dtos) {}; 
-		response = javax.ws.rs.core.Response.ok(entity).build();
+		GenericEntity<List<DTOEmploye>> entity = new GenericEntity<List<DTOEmploye>>(dtos) {}; 
+		response = Response.ok(entity).build();
 		return response;
 	}
 	
