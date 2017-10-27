@@ -12,6 +12,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import be.ste.ts.datasheet.dto.DTOBuilder;
 import be.ste.ts.datasheet.dto.DTOEmploye;
 import be.steformations.java_data.timesheets.entities.Employee;
 import be.steformations.java_data.timesheets.service.TimesheetsDataService;
@@ -31,9 +32,8 @@ public class TimeSheetService {
 	public Response getEmployeById(@PathParam("id") int id) {
 		Response response = null;
 		Employee emp = this.dao.findOneEmployeeById(id);
-		if (emp == null) {
-			response = Response.status(404).build();
-		} else {
+		if (emp == null) response = Response.status(404).build();
+		 else{
 			DTOEmploye dto = DTOBuilder.build(emp);
 			response = Response.ok(dto).build();
 		}
@@ -43,7 +43,7 @@ public class TimeSheetService {
 	@Path("employe/list")
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
-	public javax.ws.rs.core.Response getAllEmploye() {
+	public Response getAllEmploye() {
 		Response response = null;
 	
 		List<? extends Employee> employes = this.dao.findAllEmployees();
@@ -55,5 +55,4 @@ public class TimeSheetService {
 		return response;
 	}
 	
-
 }
