@@ -14,7 +14,9 @@ import javax.ws.rs.core.Response;
 
 import be.ste.ts.datasheet.dto.DTOBuilder;
 import be.ste.ts.datasheet.dto.DTOEmploye;
+import be.ste.ts.datasheet.dto.DTOPrestation;
 import be.steformations.java_data.timesheets.entities.Employee;
+import be.steformations.java_data.timesheets.entities.Prestation;
 import be.steformations.java_data.timesheets.service.TimesheetsDataService;
 
 @javax.ws.rs.Path("service")
@@ -26,7 +28,7 @@ public class TimeSheetService {
 		this.dao= DaoRestFactory.getInstance().getDao();
 	}
 	
-	@GET
+	@GET //http://localhost:8080/timesheet/service/employe/2/
 	@Path("employe/{id:[1-9]+}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Response getEmployeById(@PathParam("id") int id) {
@@ -41,7 +43,7 @@ public class TimeSheetService {
 	}
 	
 	@Path("employe/list")
-	@GET
+	@GET //http://localhost:8080/timesheet/service/employe/list
 	@Produces(MediaType.APPLICATION_XML)
 	public Response getAllEmploye() {
 		Response response = null;
@@ -51,6 +53,20 @@ public class TimeSheetService {
 		for (Employee emp : employes) dtos.add(DTOBuilder.build(emp));
 		
 		GenericEntity<List<DTOEmploye>> entity = new GenericEntity<List<DTOEmploye>>(dtos) {}; 
+		response = Response.ok(entity).build();
+		return response;
+	}
+	@Path("employe/{id:[1-9]+}/plist")
+	@GET //http://localhost:8080/timesheet/service/employe/2/plist
+	@Produces(MediaType.APPLICATION_XML)
+	public Response getAllPrestationByIdEmploye(@PathParam("id") int id) {
+		Response response = null;
+	
+		List<? extends Prestation> prestations = this.dao.findAllPrestationsByEmployeeId(id);
+		List<DTOPrestation> dtos = new ArrayList<DTOPrestation>();
+		for (Prestation pres : prestations) dtos.add(DTOBuilder.build(pres));
+		
+		GenericEntity<List<DTOPrestation>> entity = new GenericEntity<List<DTOPrestation>>(dtos) {}; 
 		response = Response.ok(entity).build();
 		return response;
 	}
