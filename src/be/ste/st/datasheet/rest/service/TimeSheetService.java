@@ -4,7 +4,9 @@ package be.ste.st.datasheet.rest.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -99,6 +101,24 @@ public class TimeSheetService {
 		
 		GenericEntity<List<DTOProject>> entity = new GenericEntity<List<DTOProject>>(dtos) {}; 
 		response = Response.ok(entity).build();
+		return response;
+	}
+	@POST //http://localhost:8080/timesheet/service/prestation/add
+	@Path("prestation/add")
+	@Consumes(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_XML)
+	public javax.ws.rs.core.Response addPrestation(DTOPrestation input) {
+		Response response = null;
+		Prestation p = this.dao.addPrestation(input.getEmployee().getId(), 
+												input.getProject().getId(), 
+												input.getComment(), 
+												input.getDay(), 
+												input.getDuration());
+		if (p == null) response = Response.status(500).build(); 
+		else {
+			DTOPrestation dto = DTOBuilder.build(p);
+			response = Response.ok(dto).build();
+		}
 		return response;
 	}
 }
