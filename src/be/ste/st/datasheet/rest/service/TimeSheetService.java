@@ -15,11 +15,13 @@ import javax.ws.rs.core.Response;
 import be.ste.ts.datasheet.dto.DTOBuilder;
 import be.ste.ts.datasheet.dto.DTOEmploye;
 import be.ste.ts.datasheet.dto.DTOPrestation;
+import be.ste.ts.datasheet.dto.DTOProject;
 import be.steformations.java_data.timesheets.entities.Employee;
 import be.steformations.java_data.timesheets.entities.Prestation;
+import be.steformations.java_data.timesheets.entities.Project;
 import be.steformations.java_data.timesheets.service.TimesheetsDataService;
 
-@javax.ws.rs.Path("service")
+@Path("service")
 public class TimeSheetService {
 	private TimesheetsDataService dao;
 	
@@ -56,6 +58,21 @@ public class TimeSheetService {
 		response = Response.ok(entity).build();
 		return response;
 	}
+	@Path("employe/{login}/{password}")
+	@GET //http://localhost:8080/timesheet/service/employe/wonder/woman
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEmployeByLoginPassword(@PathParam("login") String login,
+											  @PathParam("password") String password) {
+		Response response = null;
+	
+		Employee emp = this.dao.findOneEmployeeByLoginAndPassword(login, password);
+		if (emp == null) response = Response.status(404).build();
+		 else{
+			DTOEmploye dto = DTOBuilder.build(emp);
+			response = Response.ok(dto).build();
+		}
+		return response;
+	}
 	@Path("employe/{id:[1-9]+}/plist")
 	@GET //http://localhost:8080/timesheet/service/employe/2/plist
 	@Produces(MediaType.APPLICATION_XML)
@@ -70,5 +87,18 @@ public class TimeSheetService {
 		response = Response.ok(entity).build();
 		return response;
 	}
-	
+	@Path("project/list")
+	@GET //http://localhost:8080/timesheet/service/project/list
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllProject() {
+		Response response = null;
+		
+		List<? extends Project> projets = this.dao.findAllProjects();
+		List<DTOProject> dtos = new ArrayList<DTOProject>();
+		for (Project emp : projets) dtos.add(DTOBuilder.build(emp));
+		
+		GenericEntity<List<DTOProject>> entity = new GenericEntity<List<DTOProject>>(dtos) {}; 
+		response = Response.ok(entity).build();
+		return response;
+	}
 }
